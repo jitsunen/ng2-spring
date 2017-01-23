@@ -23,6 +23,8 @@ public class Command {
         return javascriptCommand;
     }
 
+    public String getClientId(){return this.clientId;}
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

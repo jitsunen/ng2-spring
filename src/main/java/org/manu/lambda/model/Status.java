@@ -4,33 +4,27 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.concurrent.Future;
+
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.sym.error;
+
 /**
  * Created by parth on 20/01/17.
  */
 public class Status {
-    private final State state;
-    private final String result;
     private final Command command;
+    private final Future<String> commandFuture;
 
-    public Status(State state, String result, Command command) {
-        this.state = state;
-        this.result = result;
+    public Status(Future<String> commandFuture, Command command) {
         this.command = command;
-    }
-
-    public Status with(State state) {
-        return new Status(state, this.result, this.command);
-    }
-
-    public Status with(State state, String result) {
-        return new Status(state, result, this.command);
+        this.commandFuture = commandFuture;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("state", state)
-                .append("result", result)
+                .append("state", getState())
+                .append("result", getResult())
                 .append("command", command)
                 .toString();
     }
@@ -44,8 +38,8 @@ public class Status {
         Status status = (Status) o;
 
         return new EqualsBuilder()
-                .append(state, status.state)
-                .append(result, status.result)
+                .append(getState(), status.getState())
+                .append(getResult(), status.getResult())
                 .append(command, status.command)
                 .isEquals();
     }
@@ -53,17 +47,25 @@ public class Status {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-                .append(state)
-                .append(result)
+                .append(getState())
+                .append(getResult())
                 .append(command)
                 .toHashCode();
     }
 
     public State getState() {
-        return state;
+        return (commandFuture.isDone()) ? State.COMPLETED : State.PROCESSING;
     }
 
     public String getResult() {
+        String result = null;
+        try {
+            if (commandFuture.isDone()) {
+                result = "[Result] " + commandFuture.get();
+            }
+        } catch (Exception e) {
+            result = "[Error] " + e.getMessage();
+        }
         return result;
     }
 
