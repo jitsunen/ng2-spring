@@ -38,7 +38,7 @@ public class LambdaOnPiController {
 
     private List<Status> statuses = Lists.newArrayList();
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = "*")
     @RequestMapping(method = RequestMethod.GET, path = "/submitCommand", produces = {"application/json"})
     public
     @ResponseBody
@@ -49,7 +49,7 @@ public class LambdaOnPiController {
         return "{\"result\":\"fine\"}";
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = "*")
     @RequestMapping(method = RequestMethod.GET, path = "/status", produces = {"application/json"})
     public
     @ResponseBody
