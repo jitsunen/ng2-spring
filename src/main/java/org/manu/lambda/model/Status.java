@@ -58,7 +58,7 @@ public class Status {
     }
 
     public String getResult() {
-        String result = null;
+        String result = "";
         try {
             if (commandFuture.isDone()) {
                 result = "[Result] " + commandFuture.get();
